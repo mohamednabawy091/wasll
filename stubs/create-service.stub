@@ -1,0 +1,15 @@
+<?php
+
+namespace App\Services;
+use App\Model\{{model}};
+
+class {{service}}
+{
+    /**
+     * Create a new {{modelLower}}
+     */
+    public function create(array $data): {{model}}
+    {
+        // Your create logic goes here
+    }
+}

@@ -1,0 +1,20 @@
+<?php
+
+namespace App\Services\{{subFolder}}\{{model}};
+
+use App\Repositories\{{model}}Repository;
+
+class {{className}}Service
+{
+    protected ${{lowerModel}}Repository;
+
+    public function __construct({{model}}Repository ${{lowerModel}}Repository)
+    {
+        $this->{{lowerModel}}Repository = ${{lowerModel}}Repository;
+    }
+
+    public function {{lowerMethod}}(array $data)
+    {
+        // Your create logic goes here
+    }
+}
