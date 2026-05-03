@@ -8,6 +8,7 @@ use App\Http\Resources\AuthResource;
 use App\Models\RefreshToken;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -74,19 +75,21 @@ class AuthController extends Controller
 
         $expirationTime = JWTAuth::factory()->getTTL() * 60;
 
+        $cookie = Cookie::make(
+            'refresh_token',
+            $refreshToken,
+            60 * 24 * 7,
+            '/',
+            null,
+            true,
+            true,
+            false,
+            'None'
+        );
+
         return (new AuthResource($user, $token, $expirationTime))
                 ->response()
-                ->cookie(
-                'refresh_token',
-                $refreshToken,
-                60 * 24 * 7,
-                '/',
-                null,
-                true,
-                true,
-                false,
-                'None'
-            );
+                ->withCookie($cookie);
     }
 
     public function logout()
@@ -122,7 +125,7 @@ class AuthController extends Controller
         }
     }
 
-    private function admin($user){
+    private function admin(User $user){
         if($user->user_type === 'admin'){
             return true;
         }

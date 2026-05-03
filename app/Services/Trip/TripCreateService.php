@@ -12,10 +12,6 @@ class TripCreateService
 
     public function create(array $data, User $user)
     {
-
-        // if(!$user->isAdmin()) {
-        //     throw new \Exception('Unauthorized');
-        // }
         // Your create logic goes here
         $tripData = [
             'driver_id' =>$data['driver_id'],
