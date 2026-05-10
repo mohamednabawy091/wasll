@@ -17,13 +17,20 @@ class Driver extends Model
         'status',
     ];
 
-    public function user(){
+    public function user()
+    {
         return $this->belongsTo(User::class);
     }
 
-    public function vehicles(){
+    public function vehicles()
+    {
         return $this->belongsToMany(Vehicle::class, 'driver_veichles')
                 ->withPivot('shift_start', 'shift_end')
                 ->withTimestamps();
+    }
+
+    public function trips()
+    {
+        return $this->hasMany(Trip::class);
     }
 }

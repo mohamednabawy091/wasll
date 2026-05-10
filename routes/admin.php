@@ -3,23 +3,25 @@
 use App\Http\Controllers\Api\Admin\AuthController;
 use App\Http\Controllers\Api\Admin\DriverController;
 use App\Http\Controllers\Api\Admin\RouteController;
+use App\Http\Controllers\Api\Admin\StatsController;
 use App\Http\Controllers\Api\Admin\TripController;
 use App\Http\Controllers\Api\Admin\VehicleController;
 use App\Http\Controllers\Api\Frontend\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => 'v1'], function (){
-    //public auth route
-        Route::post('/register', [AuthController::class, 'register']);
+    //public auth route 
         Route::post('/login', [AuthController::class, 'login']);
+        Route::post('/refresh', [AuthController::class, 'refresh']);
 
-   
+    
+    Route::group(['middleware' => ['auth:api']], function(){
+        Route::post('/logout', [AuthController::class, 'logout']);
+    });
+
     Route::group(['middleware' => ['auth:api', 'admin']], function(){
 
-        Route::post('/logout', [AuthController::class, 'logout']);
-        Route::get('/profile', [UserController::class, 'me']);
-        Route::get('/counts', [UserController::class, 'tripCount']);
-        Route::post('/refresh', [AuthController::class, 'refresh']);
+        Route::get('/counts', [StatsController::class, 'showStats']);
         Route::post('/route', [RouteController::class, 'store']);
         Route::post('/driver', [DriverController::class, 'store']);
         Route::post('/vehicle', [VehicleController::class, 'store']);
@@ -33,6 +35,7 @@ Route::group(['prefix' => 'v1'], function (){
         Route::get("/trip/{id}", [TripController::class, 'show']);
         Route::get("/vehicle/{id}", [VehicleController::class, 'show']);
         Route::post("/trip/{id}", [TripController::class, 'update']);
+        Route::post("/assigntrip", [TripController::class, 'assignToDriver']);
     });
         
 });

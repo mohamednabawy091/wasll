@@ -50,7 +50,7 @@ class RouteController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(RouteShowService $routeShowService, $id)
+    public function show(RouteShowService $routeShowService, int $id)
     {
         $route = $routeShowService->show($id);
 

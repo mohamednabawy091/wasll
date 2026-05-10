@@ -24,6 +24,7 @@ class User extends Authenticatable implements JWTSubject
         'password',
         'phone',
         'user_type',
+        'profile_picture'
     ];
 
     /**
@@ -69,6 +70,10 @@ class User extends Authenticatable implements JWTSubject
 
     public function isAdmin(): bool{
         return $this->user_type === 'admin';
+    }
+
+    public function refreshTokens(){
+        return $this->hasMany(RefreshToken::class);
     }
 
 }

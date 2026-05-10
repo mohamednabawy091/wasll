@@ -8,54 +8,23 @@ use App\Http\Resources\AuthResource;
 use App\Models\RefreshToken;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
-use function Illuminate\Support\now as SupportNow;
-use function Symfony\Component\Clock\now;
 
 class AuthController extends Controller
 {
-
-    public function register(AuthRequest $request)
-    {
-        try{
-            $user = User::create([
-                'name'=> $request->name,
-                'email'=>$request->email,
-                'password' => Hash::make($request->password),
-                'phone'=>$request->phone,
-                'user_type' => $request->user_type ?? 'passenger'
-            ]);
-
-            // Generate Token to the user
-
-            $token = JWTAuth::fromUser($user);
-            
-            return response()->json([ $token,
-                $user,
-                'user registered successfuly',
-                201]);
-
-        }catch(\Exception $e){
-            return response()->json([
-                'success' => false,
-                'message' => 'Registration Faild'
-            ], 500);
-        }
-    }
-
     /**
      * Login user and return JWT token
      */
     public function login(LoginRequest $request) 
     {
-        $credentials = $request->only('email', 'password');
+        $credentials = $request->only(['email', 'password']);
 
-        
-        if (! $token = JWTAuth::attempt($credentials)) {
+        if (!$token = JWTAuth::attempt($credentials)) {
             return response()->json([
                 'message' => 'Invalid Credentials'
             ], 401);
@@ -63,66 +32,158 @@ class AuthController extends Controller
 
         $user = auth('api')->user();
 
-        if(!$this->admin($user)){
-            return response()->json([
-                'error' => 'Forbidden',
-            ], 403);
-        }
+        // if(!$this->admin($user)){
+        //     return response()->json([
+        //         'error' => 'Forbidden',
+        //     ], 403);
+        // }
 
-        // Generate refresh token.
 
+        /*
+         * Generate refresh token.
+        */
         $refreshToken = $this->generateRefreshToken($user);
 
-        $expirationTime = JWTAuth::factory()->getTTL() * 60;
-
+        /*
+         * Save refresh token in cookie.
+        */
         $cookie = Cookie::make(
             'refresh_token',
             $refreshToken,
             60 * 24 * 7,
             '/',
             null,
-            true,
+            false,
             true,
             false,
-            'None'
+            'Lax'
         );
+
+        $expirationTime = config('jwt.ttl');
 
         return (new AuthResource($user, $token, $expirationTime))
                 ->response()
                 ->withCookie($cookie);
     }
 
-    public function logout()
+    /*
+     * Refresh access token. 
+    */
+
+    public function refresh(Request $request)
+    {
+        // get refresh token from token.
+
+        $plainToken = $request->cookie('refresh_token');
+
+        if(!$plainToken){
+            return response()->json([
+                'message' => 'Refresh token not found'
+            ], 401);
+        }
+
+        // Find token in database.
+
+        $refreshTokens = RefreshToken::with('user')->get();
+
+        $matchedToken = null;
+
+        foreach($refreshTokens as $refreshToken){
+            if(Hash::check($plainToken, $refreshToken->token)){
+                $matchedToken = $refreshToken;
+                break;
+            }
+        }
+
+        /*
+        * Invalid token.
+        */
+
+        if(!$matchedToken){
+            return response()->json([
+                'message' => 'invalid refresh token'
+            ], 400);
+        }
+
+        /*
+        * expired token
+        */
+
+        if($matchedToken->expires_at < now()){
+            return response()->json([
+                'message' => 'token is expired'
+            ], 400);
+        }
+
+        $user = $matchedToken->user;
+
+        //Generate new access token.
+
+        $accessToken = JWTAuth::fromUser($user);
+
+        $matchedToken->delete();
+
+        $newRefreshToken = $this->generateRefreshToken($user);
+
+        /* 
+            New cookie
+        */
+        $cookie = Cookie::make(
+            'refresh_token',
+            $newRefreshToken,
+            60 * 24 * 7,
+            '/',
+            null,
+            false,
+            true,
+            false,
+            'Lax'
+        );
+
+        $expirationTime = config('jwt.ttl');
+
+        return (new AuthResource($user, $accessToken, $expirationTime))
+            ->response()
+            ->withCookie($cookie);
+    }
+
+    public function logout(Request $request)
     {
         // Implement logout logic here
         try{
             JWTAuth::invalidate(JWTAuth::getToken());
 
+            //Delete refresh token
+
+            $plainToken = $request->cookie('refresh_token');
+
+            if($plainToken){
+                $tokens = RefreshToken::all();
+
+                foreach($tokens as $token){
+                    if(Hash::check($plainToken, $token->token)){
+                        $token->delete();
+                        break;
+                    }
+                }
+            }
+
+            /**
+             * remove cookie.
+             */
+            $cookie = Cookie::forget('refresh_token');
+
             return response()->json([
-                'message' => 'Logged out',
-            ]);
+                'message' => 'Logged out successfully'
+            ])->withCookie($cookie);
+
 
         }catch(\Exception $e){
             return response()->json([
-                'message' => 'Token already invalid'
-            ], 401);
+                'message' => 'Logout Failed'
+            ], 500);
         }
 
-    }
-
-    public function refresh(){
-        try{
-            $newToken = JWTAuth::refresh(JWTAuth::getToken());
-            return [
-                'access_token' => $newToken,
-                'token_type' => 'bearer',
-                'expires_in' => config('jwt.ttl'),
-            ];
-        }catch(\Exception $e){
-            return response()->json([
-            'message' => 'Token refresh failed'
-            ], 401);
-        }
     }
 
     private function admin(User $user){

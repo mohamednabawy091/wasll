@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreTripRequest;
+use App\Http\Requests\TripAssignToDriverRequest;
 use App\Http\Requests\UpdateTripRequest;
 use App\Models\Trip;
+use App\Services\Trip\TripAssignToDriverService;
 use App\Services\Trip\TripCreateService;
 use App\Services\Trip\TripReadService;
 use App\Services\Trip\TripShowService;
@@ -55,7 +57,7 @@ class TripController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(TripShowService $tripShowService, $id)
+    public function show(TripShowService $tripShowService, int $id)
     {
         $trip = $tripShowService->show($id);
 
@@ -95,7 +97,19 @@ class TripController extends Controller
         //
     }
 
-    public function assignTrip(){
+    public function assignToDriver(TripAssignToDriverRequest $request,
+                TripAssignToDriverService $tripAssignToDriverService)
+    {
+        $data = $request->validated();
 
+        $tripAssigned = $tripAssignToDriverService->assignToDriver(
+            $data['driver_id'],
+            $data['trip_id']
+        );
+
+        return response()->json([
+            'message' => 'assigned successfully',
+            'trip' => $tripAssigned
+        ],200);
     }
 }

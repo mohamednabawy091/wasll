@@ -8,10 +8,10 @@ use Illuminate\Http\Resources\Json\JsonResource;
 class AuthResource extends JsonResource
 {
 
-    protected $token;
-    protected $expiresIn;
+    protected ?string $token;
+    protected ?string $expiresIn;
 
-    public function __construct($resource, $token = null, $expiresIn = null)
+    public function __construct(mixed $resource, ?string $token = null, ?int $expiresIn = null)
     {
         parent::__construct($resource);
         $this->token = $token;
@@ -27,11 +27,11 @@ class AuthResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-
+            
+            'user' => new UserResource($this->resource),
             'token_type' => 'Bearer',
             'access_token' => $this->token ?? null,
             'expires_in' => $this->expiresIn,
-            'user' => new UserResource($this->resource),
         ];
     }
 }
