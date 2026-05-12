@@ -15,23 +15,15 @@ return new class extends Migration
             $table->id();
 
             $table->foreignId('passenger_id')->constrained('users')->onDelete('cascade');
-            $table->foreign('passenger_id', 'trips_passenger_id_fk')
-            ->references('id')->on('users')
-            ->onDelete('cascade');
+            
 
-            $table->foreignId('driver_id')->nullable();
-            $table->foreign('driver_id', 'trips_driver_id_fk')
-                ->references('id')->on('drivers')
-                ->onDelete('cascade');
-            $table->foreignId('vehicle_id')->constrained()->onDelete('cascade');
-            $table->foreign('vehicle_id', 'trips_vehicle_id_fk')
-            ->references('id')->on('vehicles')
-            ->onDelete('cascade');
+            $table->foreignId('driver_id')->nullable()->constrained('users')->onDelete('cascade');
+            
+            $table->foreignId('vehicle_id')->constrained('vehicles')->onDelete('cascade');
+            
 
-            $table->foreignId('route_id')->constrained()->onDelete('cascade');
-            $table->foreign('route_id', 'trips_route_id_fk')
-            ->references('id')->on('routes')
-            ->onDelete('cascade');
+            $table->foreignId('route_id')->constrained('routes')->onDelete('cascade');
+            
             //pickup
             $table->string('pickup_location');
             $table->decimal('pickup_latitude', 10, 7)->nullable();

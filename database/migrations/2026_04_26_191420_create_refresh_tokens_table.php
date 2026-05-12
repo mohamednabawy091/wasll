@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->string('token'); //hashed
+            $table->uuid('token_id')->unique();
             $table->timestamp('expires_at');
             $table->boolean('revoked')->default(false);
             $table->timestamps();

@@ -4,23 +4,30 @@ namespace App\Http\Controllers\Api\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AuthRequest;
 use App\Http\Requests\LoginRequest;
+use App\Http\Requests\UserSignupRequest;
 use App\Http\Resources\AuthResource;
 use App\Models\RefreshToken;
 use App\Models\User;
+use App\Services\RefreshToken\GenerateRefreshTokenService;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Ramsey\Uuid\Type\Integer;
+use Ramsey\Uuid\Uuid;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
+use function Illuminate\Support\now;
 
 class AuthController extends Controller
 {
     /**
      * Login user and return JWT token
      */
-    public function login(LoginRequest $request) 
+    public function login(LoginRequest $request, GenerateRefreshTokenService $generateRefreshTokenService) 
     {
         $credentials = $request->only(['email', 'password']);
 
@@ -42,7 +49,7 @@ class AuthController extends Controller
         /*
          * Generate refresh token.
         */
-        $refreshToken = $this->generateRefreshToken($user);
+        $refreshToken = $generateRefreshTokenService->generateRefreshToken($user);
 
         /*
          * Save refresh token in cookie.
@@ -70,64 +77,71 @@ class AuthController extends Controller
      * Refresh access token. 
     */
 
-    public function refresh(Request $request)
+    public function refresh(Request $request, GenerateRefreshTokenService $generateRefreshTokenService)
     {
-        // get refresh token from token.
+        // get refresh token from cookie token.
 
-        $plainToken = $request->cookie('refresh_token');
+        $cookie = $request->cookie('refresh_token');
 
-        if(!$plainToken){
+        if(!$cookie){
             return response()->json([
                 'message' => 'Refresh token not found'
             ], 401);
         }
+        
+        //split cookie
 
-        // Find token in database.
+        [$tokenId, $plainToken] = explode('|', $cookie);
 
-        $refreshTokens = RefreshToken::with('user')->get();
+        // search by indexed uuid
+        $refreshToken = RefreshToken::with('user')
+            ->where('token_id', $tokenId)
+            ->first();
 
-        $matchedToken = null;
-
-        foreach($refreshTokens as $refreshToken){
-            if(Hash::check($plainToken, $refreshToken->token)){
-                $matchedToken = $refreshToken;
-                break;
-            }
-        }
-
-        /*
-        * Invalid token.
-        */
-
-        if(!$matchedToken){
+        if(!$refreshToken){
             return response()->json([
-                'message' => 'invalid refresh token'
-            ], 400);
+                'error' => 'Invalid token'
+            ], 401);
         }
 
-        /*
-        * expired token
-        */
+        //verify actual Refresh
 
-        if($matchedToken->expires_at < now()){
+        if(
+            !Hash::check(
+                $plainToken,
+                $refreshToken->token
+            )
+        ){
             return response()->json([
-                'message' => 'token is expired'
-            ], 400);
+                'error' => 'Invalid token'
+            ], 401);
         }
 
-        $user = $matchedToken->user;
+        //check expiration.
 
-        //Generate new access token.
+        if($refreshToken->expires_at < now())
+        {
+            $refreshToken->delete();
+
+            return response()->json([
+                'error' => 'Token Expired'
+            ], 401);
+        }
+
+        $user = $refreshToken->user;
+
+        //rotate token
+
+        $refreshToken->delete();
+
+        //new access token
 
         $accessToken = JWTAuth::fromUser($user);
 
-        $matchedToken->delete();
+        //new refresh token.
 
-        $newRefreshToken = $this->generateRefreshToken($user);
+        $newRefreshToken = $generateRefreshTokenService->generateRefreshToken($user);
 
-        /* 
-            New cookie
-        */
         $cookie = Cookie::make(
             'refresh_token',
             $newRefreshToken,
@@ -194,18 +208,18 @@ class AuthController extends Controller
         return false;
     }
 
-    private function generateRefreshToken(User $user)
-    {
-        $plainToken = Str::random(64);
+    // private function generateRefreshToken(User $user)
+    // {
+    //     $plainToken = Str::random(64);
 
-        RefreshToken::create([
-            'user_id' => $user->id,
-            'token' => Hash::make($plainToken),
-            'expires_at' => Carbon::now()->addDays(7),
-        ]);
+    //     RefreshToken::create([
+    //         'user_id' => $user->id,
+    //         'token' => Hash::make($plainToken),
+    //         'expires_at' => Carbon::now()->addDays(7),
+    //     ]);
 
-        return $plainToken;
-    }
+    //     return $plainToken;
+    // }
 
     // protected function responseWithJwtToken($token, User $user, $message = 'success', $status = 200){
 

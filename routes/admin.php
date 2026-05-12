@@ -10,7 +10,7 @@ use App\Http\Controllers\Api\Frontend\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => 'v1'], function (){
-    //public auth route 
+    //public auth route
         Route::post('/login', [AuthController::class, 'login']);
         Route::post('/refresh', [AuthController::class, 'refresh']);
 
