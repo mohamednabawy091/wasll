@@ -2,20 +2,25 @@
 
 namespace App\Services\Route;
 
+use App\Models\Route;
 use App\Repositories\RouteRepository;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class RouteCreateService
 {
-    protected $routeRepository;
+    use AuthorizesRequests;
 
-    public function __construct(RouteRepository $routeRepository)
+    public function __construct(private RouteRepository $routeRepository)
     {
-        $this->routeRepository = $routeRepository;
+        
     }
 
     public function create(array $data)
     {
+
         // Your create logic goes here
+
+        $this->authorize('create', Route::class);
 
         $routeData = [
             'name' => $data['name'],

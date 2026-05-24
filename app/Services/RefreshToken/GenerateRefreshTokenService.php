@@ -10,12 +10,9 @@ use Illuminate\Support\Str;
 
 class GenerateRefreshTokenService
 {
-    protected $refreshtokenRepository;
-
-    public function __construct(RefreshTokenRepository $refreshtokenRepository)
-    {
-        $this->refreshtokenRepository = $refreshtokenRepository;
-    }
+    
+    public function __construct(private RefreshTokenRepository $refreshtokenRepository)
+    {}
 
     public function generateRefreshToken(User $user): string
     {

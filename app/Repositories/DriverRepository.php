@@ -25,4 +25,10 @@ class DriverRepository extends BaseRepository
     {
         $this->pushCriteria(app(RequestCriteria::class));
     }
+
+    public function findId(int $id){
+        return $this->model
+            ->with('user')
+            ->findOrFail($id);
+    }   
 }

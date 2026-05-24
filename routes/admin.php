@@ -22,11 +22,11 @@ Route::group(['prefix' => 'v1'], function (){
     Route::group(['middleware' => ['auth:api', 'admin']], function(){
 
         Route::get('/counts', [StatsController::class, 'showStats']);
-        Route::post('/route', [RouteController::class, 'store']);
+        Route::post('/route', [RouteController::class, 'store']);  // <- this is it 
         Route::post('/driver', [DriverController::class, 'store']);
         Route::post('/vehicle', [VehicleController::class, 'store']);
         Route::post('/trip', [TripController::class, 'store']);
-        Route::get("/drivers", [DriverController::class, 'index']); //Read all drivers
+        Route::get("/drivers", [DriverController::class, 'index']);
         Route::get("/routes", [RouteController::class, 'index']);
         Route::get("/trips", [TripController::class, 'index']);
         Route::get("/vehicles", [VehicleController::class, 'index']);

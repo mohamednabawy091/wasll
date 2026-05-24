@@ -44,9 +44,9 @@ class TripController extends Controller
      */
     public function store(StoreTripRequest $storeTripRequest, TripCreateService $tripCreateService)
     {
-        $this->authorize('create', Trip::class);
+        
 
-        $trip = $tripCreateService->create($storeTripRequest->validated(), auth('api')->user());
+        $trip = $tripCreateService->create($storeTripRequest->validated());
 
         return response()->json([
             'message' => 'Trip created successfuly',

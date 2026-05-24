@@ -14,15 +14,23 @@ return new class extends Migration
         Schema::create('trips', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('passenger_id')->constrained('users')->onDelete('cascade');
-            
+            $table->foreignId('passenger_id')
+                ->nullable()
+                ->constrained('users')
+                ->cascadeOnDelete();
 
-            $table->foreignId('driver_id')->nullable()->constrained('users')->onDelete('cascade');
-            
-            $table->foreignId('vehicle_id')->constrained('vehicles')->onDelete('cascade');
-            
+            $table->foreignId('driver_id')
+                ->nullable()
+                ->constrained('users')
+                ->cascadeOnDelete();
 
-            $table->foreignId('route_id')->constrained('routes')->onDelete('cascade');
+            $table->foreignId('vehicle_id')
+                ->constrained('vehicles')
+                ->cascadeOnDelete();
+
+            $table->foreignId('route_id')
+                ->constrained('routes')
+                ->cascadeOnDelete();
             
             //pickup
             $table->string('pickup_location');

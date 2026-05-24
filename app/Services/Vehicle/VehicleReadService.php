@@ -3,6 +3,8 @@
 namespace App\Services\Vehicle;
 
 use App\Repositories\VehicleRepository;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class VehicleReadService
 {
@@ -10,7 +12,8 @@ class VehicleReadService
     {}
 
     public function read()
-    {
+    {  
+
         $vehicles = $this->vehicleRepository->all();
 
         return $vehicles;

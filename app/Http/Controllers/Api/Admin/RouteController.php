@@ -9,9 +9,11 @@ use App\Services\Route\RouteCreateService;
 use App\Services\Route\RouteReadService;
 use App\Services\Route\RouteShowService;
 use Illuminate\Http\Request;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class RouteController extends Controller
 {
+    use AuthorizesRequests;
     /**
      * Display a listing of the resource.
      */
@@ -38,6 +40,7 @@ class RouteController extends Controller
      */
     public function store(StoreRouteRequest $storeRouteRequest, RouteCreateService $routeCreateService)
     {
+        
         $route = $routeCreateService->create($storeRouteRequest->validated());
 
         return response()->json([

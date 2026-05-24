@@ -42,7 +42,7 @@ class TripAssignToDriverService
 
         //check if driver == user type
 
-        if($driver->user->user_type !== 'driver')
+        if($driver->user_type !== 'driver')
             {
                 abort(422, 'This user is not a driver');
             }

@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Services\User;
+namespace App\Services\User\Admin;
 
 use App\Repositories\UserRepository;
 
-class UserUpdateService
+class UserCreateService
 {
     protected $userRepository;
 
@@ -13,7 +13,7 @@ class UserUpdateService
         $this->userRepository = $userRepository;
     }
 
-    public function update(array $data)
+    public function create(array $data)
     {
         // Your create logic goes here
     }

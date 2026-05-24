@@ -21,7 +21,6 @@ class Trip extends Model
         'actual_dropoff_time',
         'status',
         'fare_amount',
-        'created_by',
     ];
 
     protected $casts = [

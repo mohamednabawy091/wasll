@@ -3,6 +3,7 @@ namespace App\Http\Controllers\Api\Frontend;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdateProfilePicture;
+use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -10,8 +11,8 @@ class UserController extends Controller
 {
     public function me(){
         return response()->json([
-            'user' => auth('api')->user(),
-        ]);
+            (new UserResource(request()->user())),
+        ], 200);
     }
 
     public function uploadProfilePicture(UpdateProfilePicture $request){

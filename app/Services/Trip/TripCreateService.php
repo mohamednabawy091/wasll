@@ -2,16 +2,20 @@
 
 namespace App\Services\Trip;
 
+use App\Models\Trip;
 use App\Models\User;
 use App\Repositories\TripRepository;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class TripCreateService
 {
+    use AuthorizesRequests;
     public function __construct(private TripRepository $tripRepository)
     {}
 
-    public function create(array $data, User $user)
+    public function create(array $data)
     {
+        $this->authorize('create', Trip::class);
         // Your create logic goes here
         $tripData = [
             'driver_id' =>$data['driver_id'],
@@ -28,7 +32,6 @@ class TripCreateService
             'actual_dropoff_time' => $data['actual_dropoff_time'],
             'status' => $data['status'],
             'fare_amount' => $data['fare_amount'],
-            'created_by' => $user->id,
         ];
 
         $trip = $this->tripRepository->create($tripData);

@@ -9,15 +9,9 @@ use App\Http\Resources\AuthResource;
 use App\Models\RefreshToken;
 use App\Models\User;
 use App\Services\RefreshToken\GenerateRefreshTokenService;
-use Carbon\Carbon;
-use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
-use Ramsey\Uuid\Type\Integer;
-use Ramsey\Uuid\Uuid;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 use function Illuminate\Support\now;
@@ -165,36 +159,37 @@ class AuthController extends Controller
     {
         // Implement logout logic here
         try{
-            JWTAuth::invalidate(JWTAuth::getToken());
+
+            // Invalidate the access token (requires blacklist enabled)
+            JWTAuth::parseToken()->invalidate();
 
             //Delete refresh token
 
-            $plainToken = $request->cookie('refresh_token');
+            $cookie = $request->cookie('refresh_token');
 
-            if($plainToken){
-                $tokens = RefreshToken::all();
-
-                foreach($tokens as $token){
-                    if(Hash::check($plainToken, $token->token)){
-                        $token->delete();
-                        break;
-                    }
+            if($cookie && str_contains($cookie, '|')){
+                [$tokenId, $plainToken] = explode('|', $cookie, 2);
+                $refreshToken = RefreshToken::where('token_id', $tokenId)->first();
+                if ($refreshToken && Hash::check($plainToken, $refreshToken->token)) {
+                    $refreshToken->delete();
                 }
+
             }
 
             /**
              * remove cookie.
              */
-            $cookie = Cookie::forget('refresh_token');
+            $expirationCookie = Cookie::forget('refresh_token');
 
             return response()->json([
                 'message' => 'Logged out successfully'
-            ])->withCookie($cookie);
+            ])->withCookie($expirationCookie);
 
 
         }catch(\Exception $e){
             return response()->json([
-                'message' => 'Logout Failed'
+                'message' => 'Logout Failed',
+                'error'   => $e->getMessage()
             ], 500);
         }
 
