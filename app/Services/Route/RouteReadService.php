@@ -12,7 +12,7 @@ class RouteReadService
 
     public function read()
     {
-        $routes = $this->routeRepository->all();
+        $routes = $this->routeRepository->get();
 
         return $routes;
     }

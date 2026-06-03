@@ -9,7 +9,7 @@ class RouteShowService {
     public function __construct(private RouteRepository $routeRepository)
     {}
 
-    public function show($id)
+    public function show(int $id)
     {
         $route = $this->routeRepository->find($id);
 

@@ -13,7 +13,7 @@ class TripReadService
     public function read()
     {
         // Your create logic goes here
-        $trips = $this->tripRepository->all();
+        $trips = $this->tripRepository->get();
 
         return $trips;
     }

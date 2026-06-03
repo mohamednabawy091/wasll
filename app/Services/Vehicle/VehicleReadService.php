@@ -14,7 +14,7 @@ class VehicleReadService
     public function read()
     {  
 
-        $vehicles = $this->vehicleRepository->all();
+        $vehicles = $this->vehicleRepository->get();
 
         return $vehicles;
     }

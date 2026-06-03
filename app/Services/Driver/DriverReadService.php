@@ -14,7 +14,7 @@ class DriverReadService
     public function read()
     {
         // Your create logic goes here
-        $drivers = $this->driverRepository->all();
+        $drivers = $this->driverRepository->get();
 
         return $drivers;
     }

@@ -2,16 +2,19 @@
 
 namespace App\Http\Controllers\Api\Frontend;
 
+use App\Events\UserSignedup;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\UserSignupRequest;
 use App\Http\Resources\AuthResource;
+use App\Mail\WelcomeUserMail;
 use App\Models\User;
 use App\Services\RefreshToken\GenerateRefreshTokenService;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthController extends Controller
@@ -29,17 +32,24 @@ class AuthController extends Controller
             'user_type' =>$request->user_type ?? 'passenger'
             ]);
 
+            // Fire the event listener handles the email asynchronously
+
+            event(new UserSignedup($user));
+
             $token = Auth::fromUser($user);
 
             return response()->json([
                 'data' => $user,
                 'token' => $token,
-                'User signedup successfully'
+                'message' => 'User signedup successfully'
             ], 201);
         }catch(Exception $e){
             return response()->json([
                 'success' => false,
-                'message' => 'Signup Failed'
+                'message' => 'Signup Failed',
+                'error' => $e->getMessage(),
+                'line' => $e->getLine(),
+                'file' => $e->getFile(),
             ], 500);
         }   
 
