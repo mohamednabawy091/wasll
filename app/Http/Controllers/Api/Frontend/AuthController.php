@@ -7,7 +7,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\UserSignupRequest;
 use App\Http\Resources\AuthResource;
-use App\Mail\WelcomeUserMail;
 use App\Models\User;
 use App\Services\RefreshToken\GenerateRefreshTokenService;
 use Exception;

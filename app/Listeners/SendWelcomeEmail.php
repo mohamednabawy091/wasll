@@ -4,9 +4,10 @@ namespace App\Listeners;
 
 use App\Events\UserSignedup;
 use App\Mail\WelcomeUserMail;
+use Carbon\Carbon;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\URL;
 
 class SendWelcomeEmail implements ShouldQueue
 {
@@ -27,9 +28,20 @@ class SendWelcomeEmail implements ShouldQueue
      */
     public function handle(UserSignedup $event): void
     {
+        $user = $event->user;
+
+        $verificationUrl = URL::temporarySignedRoute(
+            'verification.verify',
+            Carbon::now()->addHours(24),
+            [
+                'id' => $user->id,
+                'hash' => sha1($user->email),
+            ]
+        );
+
         Mail::purge('smtp');
 
-        Mail::to($event->user->email)
-            ->send(new WelcomeUserMail($event->user));
+        Mail::to($user->email)
+            ->send(new WelcomeUserMail($user, $verificationUrl));
     }
 }
