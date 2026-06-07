@@ -23,7 +23,23 @@ class AuthController extends Controller
      */
     public function login(LoginRequest $request, GenerateRefreshTokenService $generateRefreshTokenService) 
     {
+        $userByEmail = User::where('email', $request->email)->first();
+
         $credentials = $request->only(['email', 'password']);
+
+        if(!$userByEmail){
+            return response()->json([
+                'message' => 'User Not Found'
+            ], 400);
+        }
+
+        $validPassword = Hash::check($request->password, $userByEmail->password);
+
+        if(! $validPassword){
+            return response()->json([
+                'message' => 'Invalid Password',
+            ], 400);
+        }
 
         if (!$token = JWTAuth::attempt($credentials)) {
             return response()->json([
@@ -33,12 +49,13 @@ class AuthController extends Controller
 
         $user = auth('api')->user();
 
-        // if(!$this->admin($user)){
-        //     return response()->json([
-        //         'error' => 'Forbidden',
-        //     ], 403);
-        // }
+        if(!$this->admin($user)){
+            return response()->json([
+                'error' => 'Forbidden',
+            ], 403);
+        }
 
+         
 
         /*
          * Generate refresh token.

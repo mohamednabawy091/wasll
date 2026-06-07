@@ -27,7 +27,7 @@ class TripAssignToDriverService
         }
         
         //find driver.
-        $driver = $this->driverRepository->find($driverId);
+        $driver = $this->driverRepository->findId($driverId);
 
         if(!$driver)
             {
@@ -42,14 +42,22 @@ class TripAssignToDriverService
 
         //check if driver == user type
 
-        if($driver->user_type !== 'driver')
+        if($driver->user->user_type !== 'driver' || !$driver->user->hasVerifiedEmail())
             {
-                abort(422, 'This user is not a driver');
+                abort(422, 'This user is not a driver or his email is not verified yet!');
             }
+
+        //check availablity of the driver
+
+        if($driver->status !== 'available')
+        {
+            abort(422, 'Driver is not available');
+        }
+        
         // check if trip status pending.
-        if($trip->status ==='assigned')
+        if($trip->status !=='pending')
             {
-                abort(422, 'This trip already assigned to a driver');
+                abort(422, "This trip can\'t be assigned as it is '{$trip->status} ' . trip.");
             }
 
         $trip->driver_id = $driver->id;

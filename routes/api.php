@@ -13,9 +13,13 @@ Route::group(['prefix' => 'v1'], function(){
             ->middleware('signed')
             ->name('verification.verify');
 
-    Route::group(['middleware' => ['auth:api']], function(){
-        Route::get('/profile', [UserController::class, 'me']);
-        Route::post('user/picture', [UserController::class, 'uploadProfilePicture']);
+        Route::group(['middleware' => ['auth:api', 'verified']], function(){
+            // Route::post
+        });
+
+        Route::group(['middleware' => ['auth:api']], function(){
+            Route::get('/profile', [UserController::class, 'me']);
+            Route::post('user/picture', [UserController::class, 'uploadProfilePicture']);
     });
 });
 

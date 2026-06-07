@@ -34,7 +34,7 @@ Route::group(['prefix' => 'v1'], function (){
         Route::get("/route/{id}", [RouteController::class, 'show']);
         Route::get("/trip/{id}", [TripController::class, 'show']);
         Route::get("/vehicle/{id}", [VehicleController::class, 'show']);
-        Route::post("/trip/{id}", [TripController::class, 'update']);
+        Route::put("/trip/{id}", [TripController::class, 'update']);
         Route::post("/assigntrip", [TripController::class, 'assignToDriver']);
     });
         

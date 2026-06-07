@@ -21,8 +21,7 @@ class DriverController extends Controller
 
         return response()->json([
             $drivers,
-            200
-        ]);
+        ], 200);
     }
 
     /**

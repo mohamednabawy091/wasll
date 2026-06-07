@@ -21,7 +21,7 @@ return new class extends Migration
 
             $table->foreignId('driver_id')
                 ->nullable()
-                ->constrained('users')
+                ->constrained('drivers')
                 ->cascadeOnDelete();
 
             $table->foreignId('vehicle_id')
