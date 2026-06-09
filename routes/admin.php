@@ -1,12 +1,13 @@
 <?php
 
 use App\Http\Controllers\Api\Admin\AuthController;
+use App\Http\Controllers\Api\Admin\DashboardController;
 use App\Http\Controllers\Api\Admin\DriverController;
 use App\Http\Controllers\Api\Admin\RouteController;
 use App\Http\Controllers\Api\Admin\StatsController;
 use App\Http\Controllers\Api\Admin\TripController;
+use App\Http\Controllers\Api\Admin\UserController;
 use App\Http\Controllers\Api\Admin\VehicleController;
-use App\Http\Controllers\Api\Frontend\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => 'v1'], function (){
@@ -36,6 +37,8 @@ Route::group(['prefix' => 'v1'], function (){
         Route::get("/vehicle/{id}", [VehicleController::class, 'show']);
         Route::put("/trip/{id}", [TripController::class, 'update']);
         Route::post("/assigntrip", [TripController::class, 'assignToDriver']);
+        Route::get("/dashboard/stats", [DashboardController::class, 'statistics']);
+        Route::get("/users", [UserController::class, 'index']);
     });
         
 });

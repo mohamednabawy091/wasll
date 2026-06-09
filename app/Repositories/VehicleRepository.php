@@ -25,4 +25,8 @@ class VehicleRepository extends BaseRepository
     {
         $this->pushCriteria(app(RequestCriteria::class));
     }
+
+    public function vehiclesCount(): int{
+        return $this->model->count();
+    }
 }

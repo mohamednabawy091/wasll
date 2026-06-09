@@ -6,6 +6,8 @@ use App\Models\User;
 use Prettus\Repository\Eloquent\BaseRepository;
 use Prettus\Repository\Criteria\RequestCriteria;
 
+use function Laravel\Prompts\error;
+
 class UserRepository extends BaseRepository
 {
     /**
@@ -24,5 +26,34 @@ class UserRepository extends BaseRepository
     public function boot()
     {
         $this->pushCriteria(app(RequestCriteria::class));
+    }
+
+    public function usersCount(): int{
+        return $this->model->count();
+    }
+
+    public function passengersCount(): int{
+        return $this->model->where('user_type', 'passenger')->count();
+    }
+
+    public function verifiedUsersCount(): int{
+        return $this->model->where('is_verified', true)->count();
+    }
+
+    public function getUsers(array $filters){
+
+        $query = $this->model->query();
+
+        $perPage = request()->input('per_page') ?? 10;
+
+        if(!empty($filters['user_type'])){
+            $query->where('user_type', $filters['user_type']);
+        }
+
+        if(isset($filters['is_verified'])){
+            $query->where('is_verified', $filters['is_verified']);
+        }
+
+        return $query->paginate($perPage);
     }
 }

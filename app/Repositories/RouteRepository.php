@@ -25,4 +25,8 @@ class RouteRepository extends BaseRepository
     {
         $this->pushCriteria(app(RequestCriteria::class));
     }
+
+    public function activeRoutesCount(): int{
+        return $this->model->where('is_active', true)->count();
+    }
 }

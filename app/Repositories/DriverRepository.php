@@ -30,5 +30,9 @@ class DriverRepository extends BaseRepository
         return $this->model
             ->with('user')
             ->findOrFail($id);
-    }   
+    }
+
+    public function driversCount(): int{
+        return $this->model->count();
+    }
 }

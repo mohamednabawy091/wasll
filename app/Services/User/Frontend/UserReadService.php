@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Services\User;
+namespace App\Services\User\Frontend;
 
 use App\Repositories\UserRepository;
 
-class UserCreateService
+class UserReadService
 {
     protected $userRepository;
 
@@ -13,7 +13,7 @@ class UserCreateService
         $this->userRepository = $userRepository;
     }
 
-    public function create(array $data)
+    public function read(array $data)
     {
         // Your create logic goes here
     }
