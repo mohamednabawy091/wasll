@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AuthRequest;
 use App\Http\Requests\LoginRequest;
-use App\Http\Requests\UserSignupRequest;
 use App\Http\Resources\AuthResource;
 use App\Models\RefreshToken;
 use App\Models\User;

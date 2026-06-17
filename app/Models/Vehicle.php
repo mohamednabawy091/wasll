@@ -23,4 +23,8 @@ class Vehicle extends Model
                 ->withPivot('shift_start', 'shift_end')
                 ->withTimestamps();
     }
+
+    public function seats(){
+        return $this->hasMany(Seat::class);
+    }
 }

@@ -37,7 +37,7 @@ class UserRepository extends BaseRepository
     }
 
     public function verifiedUsersCount(): int{
-        return $this->model->where('is_verified', true)->count();
+        return $this->model->where('is_active', true)->count();
     }
 
     public function getUsers(array $filters){
@@ -50,8 +50,8 @@ class UserRepository extends BaseRepository
             $query->where('user_type', $filters['user_type']);
         }
 
-        if(isset($filters['is_verified'])){
-            $query->where('is_verified', $filters['is_verified']);
+        if(isset($filters['is_active'])){
+            $query->where('is_active', $filters['is_active']);
         }
 
         return $query->paginate($perPage);

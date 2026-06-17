@@ -44,8 +44,7 @@ class VehicleController extends Controller
         return response()->json([
             'message' => 'Vehicle added successfuly',
             'data' => $vehicle,
-            201
-        ]);
+        ], 201);
     }
 
     /**

@@ -45,9 +45,8 @@ class RouteController extends Controller
 
         return response()->json([
             'message' => 'Route created successfuly',
-            $route,
-            201
-        ]);
+            $route
+        ], 201);
     }
 
     /**
@@ -58,9 +57,8 @@ class RouteController extends Controller
         $route = $routeShowService->show($id);
 
         return response()->json([
-            $route,
-            200
-        ]);
+            $route
+        ], 200);
     }
 
     /**

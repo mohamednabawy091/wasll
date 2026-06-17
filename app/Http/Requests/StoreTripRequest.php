@@ -26,13 +26,9 @@ class StoreTripRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'passenger_id' => [
-                'nullable',
-                'exists:users,id,user_type,passenger'
-            ],
             'driver_id' => [
                 'nullable',
-                'exists:users,id,user_type,driver',
+                'exists:drivers,id',
             ],
             'vehicle_id' => [
                 'nullable',

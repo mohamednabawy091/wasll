@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Trip extends Model
 {
@@ -24,7 +25,9 @@ class Trip extends Model
     ];
 
     protected $casts = [
-        'scheduled_at' => 'datetime',
+        'scheduled_arrival' => 'datetime',
+        'actual_pickup_time' => 'datetime',
+        'actual_dropoff_time' => 'datetime',
     ];
 
     public function driver()
@@ -40,5 +43,9 @@ class Trip extends Model
     public function route()
     {
         return $this->belongsTo(Route::class);
+    }
+
+    public function bookings(){
+        return $this->hasMany(Booking::class);
     }
 }

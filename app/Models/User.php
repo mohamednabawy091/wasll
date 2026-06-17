@@ -24,7 +24,8 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
         'password',
         'phone',
         'user_type',
-        'profile_picture'
+        'profile_picture',
+        'is_active'
     ];
 
     /**
@@ -35,6 +36,10 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
     protected $hidden = [
         'password',
         'remember_token',
+    ];
+
+    protected $casts = [
+        'is_active' => 'boolean',
     ];
 
     public function getJWTIdentifier()
@@ -64,10 +69,6 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
         return $this->hasOne(Driver::class);
     }
 
-    public function trips(){
-        return $this->hasMany(Trip::class, 'created_by');
-    }
-
     public function isAdmin(): bool{
         return $this->user_type === 'admin';
     }
@@ -76,4 +77,7 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
         return $this->hasMany(RefreshToken::class);
     }
 
+    public function bookings(){
+        return $this->hasMany(Booking::class, 'passenger_id');
+    }
 }

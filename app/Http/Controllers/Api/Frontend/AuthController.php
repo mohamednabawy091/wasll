@@ -62,16 +62,24 @@ class AuthController extends Controller
 
         if(! $userByEmail){
             return response()->json([
-                'error' => 'User not found'
-            ], 400);
+                'error' => 'Invalid email or password.'
+            ], 401);
         }
         //validation password.
         $validPassword = Hash::check($request->password, $userByEmail->password);
 
         if(!$validPassword){
             return response()->json([
-                'error' => 'Invalid Password'
-            ], 400);
+                'error' => 'Invalid email or password.'
+            ], 401);
+        }
+
+        // check if is active
+
+        if(!$userByEmail->is_active){
+            return response()->json([
+                'error' => 'User is Deactivated.'
+            ], 403);
         }
 
         if(!$token = JWTAuth::attempt($credentials)){
@@ -102,4 +110,6 @@ class AuthController extends Controller
             ->response()
             ->withCookie($cookie);
     }
+
+    
 }

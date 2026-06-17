@@ -14,11 +14,6 @@ return new class extends Migration
         Schema::create('trips', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('passenger_id')
-                ->nullable()
-                ->constrained('users')
-                ->cascadeOnDelete();
-
             $table->foreignId('driver_id')
                 ->nullable()
                 ->constrained('drivers')
