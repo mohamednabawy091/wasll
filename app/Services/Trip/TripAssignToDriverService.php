@@ -2,6 +2,7 @@
 
 namespace App\Services\Trip;
 
+use App\Models\Trip;
 use App\Models\User;
 use App\Repositories\DriverRepository;
 use App\Repositories\TripRepository;
@@ -15,7 +16,7 @@ class TripAssignToDriverService
                                 )
     {}
 
-    public function assignToDriver(int $driverId, int $tripId)
+    public function assignToDriver(int $driverId, int $tripId):Trip
     {
         // $adminUser = $this->userRepository->isAdmin();
         /** @var User|null $user */
@@ -27,22 +28,14 @@ class TripAssignToDriverService
         }
         
         //find driver.
-        $driver = $this->driverRepository->findId($driverId);
+        $driver = $this->driverRepository->findOrFail($driverId);
 
-        if(!$driver)
-            {
-                abort(404, 'Driver not found!');
-            }
         //find trip
-        $trip = $this->tripRepository->find($tripId);
-        if(!$trip)
-            {
-                abort(404, 'Trip not found');
-            }
-
+        $trip = $this->tripRepository->findOrFail($tripId);
+       
         //check if driver == user type
 
-        if($driver->user->user_type !== 'driver' || !$driver->user->hasVerifiedEmail())
+        if($driver->user->user_type !== 'driver' && !$driver->user->hasVerifiedEmail())
             {
                 abort(422, 'This user is not a driver or his email is not verified yet!');
             }
@@ -57,7 +50,7 @@ class TripAssignToDriverService
         // check if trip status pending.
         if($trip->status !=='pending')
             {
-                abort(422, "This trip can\'t be assigned as it is '{$trip->status} ' . trip.");
+                abort(422, "This trip can't be assigned as it is '{$trip->status}'.");
             }
 
         $trip->driver_id = $driver->id;

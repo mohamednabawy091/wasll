@@ -61,10 +61,6 @@ class StoreVehicleRequest extends FormRequest
                 'nullable',
                 'numeric'
             ],
-            'is_active' => [
-                'required',
-                'boolean'
-            ]
         ];
     }
 }

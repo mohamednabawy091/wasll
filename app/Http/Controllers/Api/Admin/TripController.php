@@ -5,9 +5,11 @@ namespace App\Http\Controllers\Api\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreTripRequest;
 use App\Http\Requests\TripAssignToDriverRequest;
+use App\Http\Requests\TripAssignToVehicleRequest;
 use App\Http\Requests\UpdateTripRequest;
 use App\Models\Trip;
 use App\Services\Trip\TripAssignToDriverService;
+use App\Services\Trip\TripAssignToVehicleService;
 use App\Services\Trip\TripCreateService;
 use App\Services\Trip\TripReadService;
 use App\Services\Trip\TripShowService;
@@ -111,5 +113,17 @@ class TripController extends Controller
             'message' => 'assigned successfully',
             'trip' => $tripAssigned
         ],200);
+    }
+
+    public function assignToVehicle(TripAssignToVehicleRequest $request, TripAssignToVehicleService $tripAssignToVehicleService){
+
+        $validated = $request->validated();
+
+        $vehicleAssign = $tripAssignToVehicleService->assignToVehicle($validated['vehicle_id'], $validated['trip_id']);
+
+        return response()->json([
+            'message' => 'vehicle assigned successfully.',
+            'data' => $vehicleAssign
+        ]);
     }
 }

@@ -38,12 +38,14 @@ Route::group(['prefix' => 'v1'], function (){
         Route::get("/trip/{id}", [TripController::class, 'show']);
         Route::get("/vehicle/{id}", [VehicleController::class, 'show']);
         Route::put("/trip/{id}", [TripController::class, 'update']);
-        Route::post("/assigntrip", [TripController::class, 'assignToDriver']);
+        Route::post("/assign/driver", [TripController::class, 'assignToDriver']);
+        Route::post("/assign/vehicle", [TripController::class, 'assignToVehicle']);
         Route::get("/dashboard/stats", [DashboardController::class, 'statistics']);
         Route::get("/users", [UserController::class, 'index']);
         Route::post("/seat", [SeatController::class, 'store']);
         Route::get("/user/{id}", [UserController::class, 'show']);
         Route::put("/user/{id}/flip-status", [UserController::class, 'activationUser']);
+        Route::get("/vehicles/stats", [VehicleController::class, 'vehiclesListStats']);
     });
         
 });

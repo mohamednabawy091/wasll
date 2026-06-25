@@ -29,4 +29,21 @@ class VehicleRepository extends BaseRepository
     public function vehiclesCount(): int{
         return $this->model->count();
     }
+
+    public function getVehicleStats(){
+        return $this->model
+        ->withCount([
+            'seats as booked_seats_count' => function ($query){
+            $query->whereHas('bookings', function ($q){
+                $q->whereIn('status', ['pending', 'approved'])
+                  ->whereHas('trip', function ($tripQuery){
+                    $tripQuery->where('scheduled_arrival', '>', now());
+                  });
+            });
+        }])
+        ->withCount(['trips as upcoming_schedueld_trips' => function($query){
+            $query->where('scheduled_arrival', '>', now())
+                ->whereIn('status', ['pending', 'assigned']);
+        }])->get();
+    }
 }

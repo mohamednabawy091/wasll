@@ -26,14 +26,6 @@ class StoreTripRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'driver_id' => [
-                'nullable',
-                'exists:drivers,id',
-            ],
-            'vehicle_id' => [
-                'nullable',
-                'exists:vehicles,id',
-            ],
             'route_id' => [
                 'required',
                 'exists:routes,id'
@@ -67,14 +59,6 @@ class StoreTripRequest extends FormRequest
             ],
             'scheduled_arrival' => [
                 'required',
-                'date'
-            ],
-            'actual_pickup_time' => [
-                'nullable',
-                'date'
-            ],
-            'actual_dropoff_time' => [
-                'nullable',
                 'date'
             ],
             'status' => [

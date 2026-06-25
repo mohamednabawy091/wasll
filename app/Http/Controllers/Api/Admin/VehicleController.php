@@ -4,10 +4,12 @@ namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreVehicleRequest;
+use App\Http\Resources\IndexVehiclesStatsResource;
 use App\Models\Vehicle;
 use App\Services\Vehicle\VehicleCreateService;
 use App\Services\Vehicle\VehicleReadService;
 use App\Services\Vehicle\VehicleShowService;
+use App\Services\Vehicle\VehicleStatsService;
 use Illuminate\Auth\Events\Validated;
 use Illuminate\Http\Request;
 
@@ -82,5 +84,15 @@ class VehicleController extends Controller
     public function destroy(Vehicle $vehicle)
     {
         //
+    }
+
+    public function vehiclesListStats(VehicleStatsService $vehicleStatsService){
+        
+        $vehicleStats = $vehicleStatsService->VehicleStats();
+
+        return response()->json([
+            'success' => true,
+            'stats' => IndexVehiclesStatsResource::collection($vehicleStats),
+        ], 200);
     }
 }

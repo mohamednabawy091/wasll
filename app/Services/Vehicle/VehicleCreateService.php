@@ -22,7 +22,6 @@ class VehicleCreateService
             'capacity' => $data['capacity'],
             'latitude' => $data['latitude'],
             'longitude' => $data['longitude'],
-            'is_active' => $data['is_active']
         ];
 
         $vehicle = $this->vehicleRepository->create($vehicleData);
