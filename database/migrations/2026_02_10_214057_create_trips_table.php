@@ -37,10 +37,11 @@ return new class extends Migration
             $table->decimal('destination_longitude', 10, 7)->nullable();
             
             $table->index(['pickup_latitude', 'pickup_longitude']);
-            $table->dateTime('scheduled_arrival')->index();
+            $table->dateTime('scheduled_departure')->nullable()->index();
+            $table->dateTime('scheduled_arrival')->nullable()->index();
             $table->dateTime('actual_pickup_time')->nullable();
             $table->dateTime('actual_dropoff_time')->nullable();
-            $table->enum('status', ['pending', 'assigned', 'in_progress', 'completed', 'cancelled'])->default('pending')->index();
+            $table->enum('status', ['scheduled', 'in_progress', 'completed', 'cancelled'])->default('scheduled')->index();
             $table->decimal('fare_amount', 8, 2);
             $table->timestamps();
         });

@@ -29,4 +29,12 @@ class RouteRepository extends BaseRepository
     public function activeRoutesCount(): int{
         return $this->model->where('is_active', true)->count();
     }
+
+    public function indexRoutes(?bool $activeOnly = null){
+        $query = $this->model->withCount('trips');
+        if($activeOnly){
+            $query->where('is_active', true);
+        }
+        return $query->get();
+    }
 }

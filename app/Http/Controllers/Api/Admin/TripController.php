@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\FilterIndexTripRequest;
 use App\Http\Requests\StoreTripRequest;
 use App\Http\Requests\TripAssignToDriverRequest;
 use App\Http\Requests\TripAssignToVehicleRequest;
 use App\Http\Requests\UpdateTripRequest;
+use App\Http\Resources\AdminIndexTripsResource;
 use App\Models\Trip;
 use App\Services\Trip\TripAssignToDriverService;
 use App\Services\Trip\TripAssignToVehicleService;
@@ -23,14 +25,11 @@ class TripController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(TripReadService $tripReadService)
+    public function index(FilterIndexTripRequest $request, TripReadService $tripReadService)
     {
-        $trips = $tripReadService->read();
+        $trips = $tripReadService->read($request->validated());
 
-        return response()->json([
-            $trips,
-            200
-        ]);
+        return AdminIndexTripsResource::collection($trips);
     }
 
     /**

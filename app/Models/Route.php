@@ -6,6 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Route extends Model
 {
+
+
+    protected $casts = [
+        'stops' => 'array',
+    ];
     protected $fillable = [
         'name',
         'type',
@@ -14,6 +19,7 @@ class Route extends Model
         'distance_km',
         'estimated_duration_minutes',
         'is_active',
+        'stops',
     ];
 
     public function trips()

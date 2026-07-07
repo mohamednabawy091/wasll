@@ -15,7 +15,7 @@ class RoutePolicy
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return $user->user_type == 'admin';
     }
 
     /**

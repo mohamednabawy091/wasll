@@ -25,7 +25,6 @@ class DatabaseSeeder extends Seeder
             'email_verified_at' => now(),
             'phone' => '01023696811',
             'user_type' => 'admin',
-            'is_verified' => 1,
 
         ]);
     }

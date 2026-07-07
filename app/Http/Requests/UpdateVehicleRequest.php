@@ -4,14 +4,14 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreVehicleRequest extends FormRequest
+class UpdateVehicleRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return auth('api')->user() && auth('api')->user()->user_type === 'admin';
+        return true;
     }
 
     /**
@@ -25,7 +25,7 @@ class StoreVehicleRequest extends FormRequest
             'type' => [
                 'required',
                 'string',
-                'in:locomotive,metro,bus',
+                'in:locomotive,metro,bus'
             ],
             'manufacturer' => [
                 'required',
@@ -34,25 +34,29 @@ class StoreVehicleRequest extends FormRequest
             ],
             'model' => [
                 'required',
-                'string'
+                'string',
+                'max:20',
             ],
             'year' => [
                 'required',
                 'integer',
                 'between:1995,' . date('Y'),
-                'digits:4'
             ],
-            'license_plate'=>[
-                'required',
+            'image' => [
+                'nullable',
+                'string'
+            ],
+            'license_plate' => [
+                'nullable',
                 'string',
+                'max:20',
                 'unique:vehicles,license_plate',
-                'max:20'
             ],
             'capacity' => [
                 'required',
                 'integer',
                 'min:1',
-                'max:500',
+                'max:500'
             ],
             'latitude' => [
                 'nullable',

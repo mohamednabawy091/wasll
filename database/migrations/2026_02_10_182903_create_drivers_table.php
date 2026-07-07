@@ -19,7 +19,7 @@ return new class extends Migration
             $table->boolean('is_verified')->default(false);
             $table->decimal('rating', 3, 2)->default(0.00);
             $table->integer('total_trips')->default(0);
-            $table->enum('status', ['available', 'busy', 'offline'])->default('offline');
+            $table->enum('status', ['available', 'offline'])->default('offline');
             $table->timestamps();
         });
     }

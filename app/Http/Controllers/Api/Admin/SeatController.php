@@ -31,11 +31,6 @@ class SeatController extends Controller
      */
     public function store(StoreSeatRequest $request, SeatCreateService $seatCreateService)
     {
-        $seat = $seatCreateService->create($request->validated());
-
-        return response()->json([
-            'data' => $seat,
-        ], 201);
     }
 
     /**

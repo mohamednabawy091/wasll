@@ -10,7 +10,7 @@ class TripUpdateService
     public function __construct(private TripRepository $tripRepository)
     {}
 
-    public function update(array $data, $id)
+    public function update(array $data, int $id)
     {
         $trip = $this->tripRepository->find($id);
 

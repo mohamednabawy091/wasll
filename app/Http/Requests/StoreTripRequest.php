@@ -57,6 +57,10 @@ class StoreTripRequest extends FormRequest
                 'numeric',
                 'between:-180,180'
             ],
+            'scheduled_departure' => [
+                'required',
+                'date'
+            ],
             'scheduled_arrival' => [
                 'required',
                 'date'

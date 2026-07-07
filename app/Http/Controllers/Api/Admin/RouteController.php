@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreRouteRequest;
+use App\Http\Resources\AdminIndexRoutesResource;
 use App\Models\Route;
 use App\Services\Route\RouteCreateService;
 use App\Services\Route\RouteReadService;
@@ -17,14 +18,14 @@ class RouteController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(RouteReadService $routeReadService)
+    public function index(Request $request, RouteReadService $routeReadService)
     {
-        $routes = $routeReadService->read();
+        $activeOnly = $request->boolean('active_only');
+        $routes = $routeReadService->read($activeOnly);
 
         return response()->json([
-            $routes,
-            200
-        ]);
+            'routes' => AdminIndexRoutesResource::collection($routes),
+        ], 200);
     }
 
     /**
@@ -42,10 +43,9 @@ class RouteController extends Controller
     {
         
         $route = $routeCreateService->create($storeRouteRequest->validated());
-
         return response()->json([
             'message' => 'Route created successfuly',
-            $route
+            'route' => $route
         ], 201);
     }
 

@@ -35,7 +35,7 @@ class TripAssignToDriverService
        
         //check if driver == user type
 
-        if($driver->user->user_type !== 'driver' && !$driver->user->hasVerifiedEmail())
+        if($driver->user->user_type !== 'driver' || !$driver->user->hasVerifiedEmail())
             {
                 abort(422, 'This user is not a driver or his email is not verified yet!');
             }
@@ -52,11 +52,25 @@ class TripAssignToDriverService
             {
                 abort(422, "This trip can't be assigned as it is '{$trip->status}'.");
             }
+        
+        // overlapping
+        $overlapping = $this->tripRepository->where('driver_id', $driver->id)
+            ->where('trip', '!=' , $trip->id)
+            ->whereIn('status', ['scheduled', 'in_progress'])
+            ->where('scheduled_arrival', '>', $trip->scheduled_departure)
+            ->where('scheduled_departure', '<', $trip->scheduled_arrival)
+            ->exists();
+
+        if($overlapping) {
+            abort(422, 'This driver already has a trip that conflicts with this time window.');
+        }
 
         $trip->driver_id = $driver->id;
-        $trip->status = 'assigned';
+        $trip->status = 'scheduled';
         
         $trip->save();
+
+        $trip->load(['driver.user', 'route', 'vehicle']);
 
         return $trip;
     }

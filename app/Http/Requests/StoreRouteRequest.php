@@ -50,7 +50,14 @@ class StoreRouteRequest extends FormRequest
             'is_active' => [
                 'required',
                 'boolean'
-            ]
+            ],
+            'stops' => [
+                'nullable',
+                'array',
+            ],
+            'stops.*' => [
+                'string'
+            ],
         ];
     }
 }

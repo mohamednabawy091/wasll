@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\\Seat;
+namespace App\Services\Seat;
 
 use App\Repositories\SeatRepository;
 

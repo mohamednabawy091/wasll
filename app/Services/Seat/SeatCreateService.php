@@ -3,6 +3,7 @@
 namespace App\Services\Seat;
 
 use App\Models\Seat;
+use App\Models\Vehicle;
 use App\Repositories\SeatRepository;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
@@ -13,14 +14,9 @@ class SeatCreateService
     public function __construct(private SeatRepository $seatRepository)
     {}
 
-    public function create(array $data)
+    public function generateSeatForVehicle(Vehicle $vehicle)
     {
         // Your create logic goes here
-
-        $this->authorize('create', Seat::class);
-
-        $seat = $this->seatRepository->createSeat($data);
-
-        return $seat;
+        $this->seatRepository->createSeat($vehicle);
     }
 }

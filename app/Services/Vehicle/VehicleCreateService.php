@@ -2,12 +2,17 @@
 
 namespace App\Services\Vehicle;
 
+use App\Repositories\SeatRepository;
 use App\Repositories\VehicleRepository;
+use App\Services\Seat\SeatCreateService;
+use Illuminate\Support\Facades\DB;
 
 class VehicleCreateService
 {
 
-    public function __construct(private VehicleRepository $vehicleRepository)
+    public function __construct(private VehicleRepository $vehicleRepository,
+                                private SeatRepository $seatRepository,
+                                private SeatCreateService $seatCreateService)
     {}
 
     public function create(array $data)
@@ -23,9 +28,13 @@ class VehicleCreateService
             'latitude' => $data['latitude'],
             'longitude' => $data['longitude'],
         ];
+             return DB::transaction(function() use ($vehicleData){
+                
+                $vehicle = $this->vehicleRepository->create($vehicleData);
 
-        $vehicle = $this->vehicleRepository->create($vehicleData);
+                $this->seatCreateService->generateSeatForVehicle($vehicle);
 
-        return $vehicle;
+                return $vehicle;
+            });
+        }
     }
-}

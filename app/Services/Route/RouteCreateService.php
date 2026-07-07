@@ -22,6 +22,10 @@ class RouteCreateService
 
         $this->authorize('create', Route::class);
 
+        if($data['start_location'] === $data['end_location']){
+            abort(422, 'start location can not be the same of end location');
+        }
+
         $routeData = [
             'name' => $data['name'],
             'type' => $data['type'],
@@ -29,7 +33,8 @@ class RouteCreateService
             'end_location' => $data['end_location'],
             'distance_km' => $data['distance_km'],
             'estimated_duration_minutes' => $data['estimated_duration_minutes'],
-            'is_active' => $data['is_active']
+            'is_active' => $data['is_active'],
+            'stops' => $data['stops'],
         ];
 
         $route = $this->routeRepository->create($routeData);

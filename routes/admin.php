@@ -28,6 +28,7 @@ Route::group(['prefix' => 'v1'], function (){
         Route::post('/route', [RouteController::class, 'store']);  // <- this is it 
         Route::post('/driver', [DriverController::class, 'store']);
         Route::post('/vehicle', [VehicleController::class, 'store']);
+        Route::put('/vehicle/{id}', [VehicleController::class, 'update']);
         Route::post('/trip', [TripController::class, 'store']);
         Route::get("/drivers", [DriverController::class, 'index']);
         Route::get("/routes", [RouteController::class, 'index']);
@@ -42,7 +43,6 @@ Route::group(['prefix' => 'v1'], function (){
         Route::post("/assign/vehicle", [TripController::class, 'assignToVehicle']);
         Route::get("/dashboard/stats", [DashboardController::class, 'statistics']);
         Route::get("/users", [UserController::class, 'index']);
-        Route::post("/seat", [SeatController::class, 'store']);
         Route::get("/user/{id}", [UserController::class, 'show']);
         Route::put("/user/{id}/flip-status", [UserController::class, 'activationUser']);
         Route::get("/vehicles/stats", [VehicleController::class, 'vehiclesListStats']);

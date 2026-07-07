@@ -4,12 +4,14 @@ namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreVehicleRequest;
+use App\Http\Requests\UpdateVehicleRequest;
 use App\Http\Resources\IndexVehiclesStatsResource;
 use App\Models\Vehicle;
 use App\Services\Vehicle\VehicleCreateService;
 use App\Services\Vehicle\VehicleReadService;
 use App\Services\Vehicle\VehicleShowService;
 use App\Services\Vehicle\VehicleStatsService;
+use App\Services\Vehicle\VehicleUpdateService;
 use Illuminate\Auth\Events\Validated;
 use Illuminate\Http\Request;
 
@@ -24,8 +26,8 @@ class VehicleController extends Controller
 
         return response()->json([
             $vehicles,
-            200
-        ]);
+            
+        ], 200);
     }
 
     /**
@@ -41,11 +43,10 @@ class VehicleController extends Controller
      */
     public function store(StoreVehicleRequest $storeVehicleRequest, VehicleCreateService $vehicleCreateService)
     {
-        $vehicle = $vehicleCreateService->create($storeVehicleRequest->validated());
+        $vehicleCreateService->create($storeVehicleRequest->validated());
 
         return response()->json([
             'message' => 'Vehicle added successfuly',
-            'data' => $vehicle,
         ], 201);
     }
 
@@ -58,8 +59,7 @@ class VehicleController extends Controller
 
         return response()->json([
             $vehicle,
-            200
-        ]);
+        ], 200);
     }
 
     /**
@@ -73,9 +73,13 @@ class VehicleController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Vehicle $vehicle)
+    public function update(UpdateVehicleRequest $request, VehicleUpdateService $vehicleUpdateService, int $id)
     {
-        //
+        $vehicleUpdateService->update($request->validated(), $id);
+
+        return response()->json([
+            'message' => 'success'
+        ], 201);
     }
 
     /**

@@ -17,6 +17,7 @@ class Trip extends Model
         'destination_location',
         'destination_latitude',
         'destination_longitude',
+        'scheduled_departure',
         'scheduled_arrival',
         'actual_pickup_time',
         'actual_dropoff_time',
