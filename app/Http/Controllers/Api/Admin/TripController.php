@@ -7,11 +7,15 @@ use App\Http\Requests\FilterIndexTripRequest;
 use App\Http\Requests\StoreTripRequest;
 use App\Http\Requests\TripAssignToDriverRequest;
 use App\Http\Requests\TripAssignToVehicleRequest;
+use App\Http\Requests\TripChangeStatusRequest;
 use App\Http\Requests\UpdateTripRequest;
 use App\Http\Resources\AdminIndexTripsResource;
 use App\Models\Trip;
 use App\Services\Trip\TripAssignToDriverService;
 use App\Services\Trip\TripAssignToVehicleService;
+use App\Services\Trip\TripCancelStatus;
+use App\Services\Trip\TripCancelStatusService;
+use App\Services\Trip\TripChangeStatusService;
 use App\Services\Trip\TripCreateService;
 use App\Services\Trip\TripReadService;
 use App\Services\Trip\TripShowService;
@@ -98,8 +102,19 @@ class TripController extends Controller
         //
     }
 
+    public function tripChangeStatus(TripChangeStatusRequest $request, TripChangeStatusService $tripChangeStatusService, int $tripId){
+
+        $tripStatus = $tripChangeStatusService->changeTripStatus($tripId, $request->validated('status'));
+
+        return response()->json([
+            'message' => 'Trip status is updated',
+            'data' => $tripStatus,
+        ]);
+        
+    }
+
     public function assignToDriver(TripAssignToDriverRequest $request,
-                TripAssignToDriverService $tripAssignToDriverService)
+            TripAssignToDriverService $tripAssignToDriverService)
     {
         $data = $request->validated();
 

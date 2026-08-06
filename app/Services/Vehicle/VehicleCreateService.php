@@ -11,7 +11,6 @@ class VehicleCreateService
 {
 
     public function __construct(private VehicleRepository $vehicleRepository,
-                                private SeatRepository $seatRepository,
                                 private SeatCreateService $seatCreateService)
     {}
 

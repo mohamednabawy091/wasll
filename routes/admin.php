@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\Admin\TripController;
 use App\Http\Controllers\Api\Admin\UserController;
 use App\Http\Controllers\Api\Admin\VehicleController;
 use App\Http\Controllers\Api\Frontend\UserController as FrontendUserController;
+use App\Services\Trip\TripCancelStatusService;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => 'v1'], function (){
@@ -46,6 +47,7 @@ Route::group(['prefix' => 'v1'], function (){
         Route::get("/user/{id}", [UserController::class, 'show']);
         Route::put("/user/{id}/flip-status", [UserController::class, 'activationUser']);
         Route::get("/vehicles/stats", [VehicleController::class, 'vehiclesListStats']);
+        Route::put("/changeStatus/{id}",[TripController::class, 'tripChangeStatus']);
     });
         
 });

@@ -3,8 +3,6 @@
 namespace App\Services\Trip;
 
 use App\Models\Trip;
-use App\Models\User;
-use App\Repositories\DriverRepository;
 use App\Repositories\TripRepository;
 use Carbon\Carbon;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -38,7 +36,7 @@ class TripCreateService
             'scheduled_departure' => $data['scheduled_departure'],
             'scheduled_arrival' => $data['scheduled_arrival'],
             'fare_amount' => $data['fare_amount'],
-            'status' => $data['pending'],
+            'status' => $data['status'],
         ];
 
         $trip = $this->tripRepository->create($tripData);

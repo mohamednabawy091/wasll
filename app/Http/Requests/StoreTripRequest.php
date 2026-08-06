@@ -67,7 +67,7 @@ class StoreTripRequest extends FormRequest
             ],
             'status' => [
                 'nullable',
-                'in:pending,assigned,in_progress,completed,cancelled',
+                'in:scheduled,in_progress,completed,cancelled',
             ],
             'fare_amount' => [
                 'required',

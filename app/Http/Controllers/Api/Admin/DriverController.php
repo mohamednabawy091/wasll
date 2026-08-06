@@ -42,9 +42,8 @@ class DriverController extends Controller
 
         return response()->json([
             'message' => 'New driver is added',
-            'data' => $driver,
-            201
-        ]);
+            'data' => $driver
+        ], 201);
     }
 
     /**

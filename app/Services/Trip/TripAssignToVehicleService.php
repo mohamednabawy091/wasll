@@ -25,7 +25,7 @@ class TripAssignToVehicleService {
             return abort(403, 'Vehicle is not active.');
         }
 
-        if(!in_array($trip->status, ['pending', 'assigned'])){
+        if($trip->status !== 'scheduled'){
             return abort(422, 'this trip is not available to be assigned.');
         }
 

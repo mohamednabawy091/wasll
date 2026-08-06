@@ -2,6 +2,7 @@
 
 namespace App\Services\Booking;
 
+use App\Models\Seat;
 use App\Repositories\BookingRepository;
 use App\Repositories\SeatRepository;
 use App\Repositories\TripRepository;
@@ -24,8 +25,8 @@ class BookTripService {
 
         //check if the trip is bookable.
 
-        if(! in_array($trip->status, ['pending', 'assigned'])){
-            abort(422, 'this trip is {{$trip->status}}');
+        if($trip->status !=='scheduled'){
+            abort(422, 'this trip is ' . $trip->status);
         }
 
         //check if the seat is already booked
@@ -37,7 +38,7 @@ class BookTripService {
         //check if this seat belongs to this trip
 
         if($seat->vehicle_id !== $trip->vehicle_id){
-            abort(422, 'this seat is not in the trip {{$trip}}');
+            abort(422, "this seat is not in the trip {$trip}");
         }
 
         $book = DB::transaction(function() use ($trip, $seat){
