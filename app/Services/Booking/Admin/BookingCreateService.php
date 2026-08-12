@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Services\Booking;
+namespace App\Services\Booking\Admin;
 
 use App\Repositories\BookingRepository;
 
-class BookingReadService
+class BookingCreateService
 {
     protected $bookingRepository;
 
@@ -13,7 +13,7 @@ class BookingReadService
         $this->bookingRepository = $bookingRepository;
     }
 
-    public function read(array $data)
+    public function create(array $data)
     {
         // Your create logic goes here
     }

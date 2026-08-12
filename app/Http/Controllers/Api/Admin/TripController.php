@@ -10,9 +10,11 @@ use App\Http\Requests\TripAssignToVehicleRequest;
 use App\Http\Requests\TripChangeStatusRequest;
 use App\Http\Requests\UpdateTripRequest;
 use App\Http\Resources\AdminIndexTripsResource;
+use App\Http\Resources\AdminShowTripResource;
 use App\Models\Trip;
 use App\Services\Trip\TripAssignToDriverService;
 use App\Services\Trip\TripAssignToVehicleService;
+use App\Services\Trip\TripBookedSeatsService;
 use App\Services\Trip\TripCancelStatus;
 use App\Services\Trip\TripCancelStatusService;
 use App\Services\Trip\TripChangeStatusService;
@@ -68,8 +70,7 @@ class TripController extends Controller
 
         return response()->json([
             $trip,
-            200
-        ]);
+        ], 200);
     }
 
     /**
@@ -139,5 +140,14 @@ class TripController extends Controller
             'message' => 'vehicle assigned successfully.',
             'data' => $vehicleAssign
         ]);
+    }
+
+    public function tripsBookedSeats(TripBookedSeatsService $seatsBookedSeatsService, int $id)
+    {
+        
+        $seats = $seatsBookedSeatsService->bookedSeats($id);
+
+        return AdminShowTripResource::collection($seats);
+
     }
 }

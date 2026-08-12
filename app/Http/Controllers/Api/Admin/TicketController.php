@@ -1,14 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\Api\Frontend;
+namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\BookingTripRequest;
-use App\Models\Booking;
-use App\Services\Booking\Frontend\BookTripService;
+use App\Models\Ticket;
 use Illuminate\Http\Request;
 
-class BookingController extends Controller
+class TicketController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -37,7 +35,7 @@ class BookingController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Booking $booking)
+    public function show(Ticket $ticket)
     {
         //
     }
@@ -45,7 +43,7 @@ class BookingController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Booking $booking)
+    public function edit(Ticket $ticket)
     {
         //
     }
@@ -53,7 +51,7 @@ class BookingController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Booking $booking)
+    public function update(Request $request, Ticket $ticket)
     {
         //
     }
@@ -61,17 +59,8 @@ class BookingController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Booking $booking)
+    public function destroy(Ticket $ticket)
     {
         //
-    }
-
-    public function bookTrip(BookingTripRequest $request, BookTripService $bookTripService){
-
-        $tripBooked = $bookTripService->bookNewTrip($request->seat_id, $request->trip_id);
-
-        return response()->json([
-            $tripBooked
-        ], 201);
     }
 }

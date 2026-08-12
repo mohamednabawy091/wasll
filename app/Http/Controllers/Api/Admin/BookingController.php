@@ -1,21 +1,28 @@
 <?php
 
-namespace App\Http\Controllers\Api\Frontend;
+namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\BookingTripRequest;
+use App\Http\Requests\AdminApproveBookingRequest;
+use App\Http\Requests\FilterBookingIndexRequest;
+use App\Http\Resources\AdminIndexBookingsResource;
+use App\Http\Resources\AdminShowApprovedBookingResource;
 use App\Models\Booking;
-use App\Services\Booking\Frontend\BookTripService;
+use App\Repositories\BookingRepository;
+use App\Services\Booking\Admin\BookingApproveService;
+use App\Services\Booking\Admin\BookingReadService;
 use Illuminate\Http\Request;
 
 class BookingController extends Controller
 {
-    /**
+       /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(FilterBookingIndexRequest $request, BookingReadService $bookingReadService)
     {
-        //
+        $bookings = $bookingReadService->read($request->validated());
+
+        return AdminIndexBookingsResource::collection($bookings);
     }
 
     /**
@@ -66,12 +73,14 @@ class BookingController extends Controller
         //
     }
 
-    public function bookTrip(BookingTripRequest $request, BookTripService $bookTripService){
+    public function approveBooking(AdminApproveBookingRequest $request, Booking $booking, BookingApproveService $bookingApproveService){
 
-        $tripBooked = $bookTripService->bookNewTrip($request->seat_id, $request->trip_id);
+        $bookingApproved = $bookingApproveService->approvedBooking($booking);
 
         return response()->json([
-            $tripBooked
+            'message' => 'Booking Approved Succefully.',
+            'booking' => new AdminShowApprovedBookingResource($bookingApproved),
         ], 201);
     }
+
 }

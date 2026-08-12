@@ -2,17 +2,16 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Booking;
 use Illuminate\Foundation\Http\FormRequest;
 
-class BookingTripRequest extends FormRequest
+class AdminApproveBookingRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return $this->user()->can('create', Booking::class);
+        return $this->user()->can('approve', $this->route('booking'));
     }
 
     /**
@@ -22,18 +21,6 @@ class BookingTripRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            'trip_id' => [
-                'required',
-                'integer',
-                'exists:trips,id'
-            ],
-
-            'seat_id' => [
-                'required',
-                'integer',
-                'exists:seats,id'
-            ],
-        ];
+        return [];
     }
 }

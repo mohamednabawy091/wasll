@@ -1,20 +1,17 @@
 <?php
 
-namespace App\Services\Booking;
+namespace App\Services\Booking\Frontend;
 
-use App\Models\Seat;
 use App\Repositories\BookingRepository;
 use App\Repositories\SeatRepository;
 use App\Repositories\TripRepository;
-use App\Repositories\UserRepository;
 use Illuminate\Support\Facades\DB;
 
 class BookTripService {
 
     public function __construct(private BookingRepository $bookingRepository,
                                 private TripRepository $tripRepository,
-                                private SeatRepository $seatRepository,
-                                private UserRepository $userRepository)
+                                private SeatRepository $seatRepository,)
     {}
 
     public function bookNewTrip(int $seatId, int $tripId)
@@ -22,7 +19,6 @@ class BookTripService {
         $trip = $this->tripRepository->findOrFail($tripId);
 
         $seat = $this->seatRepository->findOrFail($seatId);
-
         //check if the trip is bookable.
 
         if($trip->status !=='scheduled'){
@@ -38,20 +34,23 @@ class BookTripService {
         //check if this seat belongs to this trip
 
         if($seat->vehicle_id !== $trip->vehicle_id){
-            abort(422, "this seat is not in the trip {$trip}");
+            abort(422, "this seat is not in the trip {$trip->id}.");
         }
 
-        $book = DB::transaction(function() use ($trip, $seat){
-            return $this->bookingRepository->create([
-                'trip_id' => $trip->id,
-                'passenger_id' => auth('api')->user()->id,
-                'seat_id' => $seat->id,
-                'status' => 'pending',
-                'amount' => $trip->fare_amount,
-                'booking_date' => now(),
-            ]);
-        });
+            return DB::transaction(function() use ($trip, $seat){
+                $booking =  $this->bookingRepository->create([
+                    'trip_id' => $trip->id,
+                    'passenger_id' => auth('api')->user()->id,
+                    'seat_id' => $seat->id,
+                    'status' => 'pending',
+                    'amount' => $trip->fare_amount,
+                    'booking_date' => now(),
+                ]);
+                $seat->update(['is_reserved' => true]);
 
-        return $book;
+                $booking->setRelation('seat', $seat);
+
+                return $booking;
+        });
     }
 }

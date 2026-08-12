@@ -2,8 +2,9 @@
 
 namespace App\Providers;
 
+use App\Events\BookingApproved;
 use App\Events\UserSignedup;
-use App\Listeners\SendEmailVerification;
+use App\Listeners\SendTicketEmail;
 use App\Listeners\SendWelcomeEmail;
 use Illuminate\Support\ServiceProvider;
 
@@ -14,6 +15,11 @@ class EventServiceProvider extends ServiceProvider
         UserSignedup::class => [
             SendWelcomeEmail::class,
         ],
+
+        BookingApproved::class => [
+            SendTicketEmail::class,
+        ],
+
     ];
 
     /**

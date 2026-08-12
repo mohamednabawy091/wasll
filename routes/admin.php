@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\Admin\AuthController;
+use App\Http\Controllers\Api\Admin\BookingController;
 use App\Http\Controllers\Api\Admin\DashboardController;
 use App\Http\Controllers\Api\Admin\DriverController;
 use App\Http\Controllers\Api\Admin\RouteController;
@@ -48,6 +49,9 @@ Route::group(['prefix' => 'v1'], function (){
         Route::put("/user/{id}/flip-status", [UserController::class, 'activationUser']);
         Route::get("/vehicles/stats", [VehicleController::class, 'vehiclesListStats']);
         Route::put("/changeStatus/{id}",[TripController::class, 'tripChangeStatus']);
+        Route::get("bookings", [BookingController::class, 'index']);
+        Route::get("booked-seats/{id}", [TripController::class, 'tripsBookedSeats']);
+        Route::put("/bookings/{booking}/approve", [BookingController::class, 'approveBooking']);
     });
         
 });

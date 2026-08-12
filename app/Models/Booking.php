@@ -26,4 +26,8 @@ class Booking extends Model
     public function trip(){
         return $this->belongsTo(Trip::class);
     }
+
+    public function ticket(){
+        return $this->hasOne(Ticket::class);
+    }
 }

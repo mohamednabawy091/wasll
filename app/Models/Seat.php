@@ -14,6 +14,7 @@ class Seat extends Model
         'vehicle_id',
         'seat_number',
         'seat_type',
+        'is_reserved',
     ];
 
     public function vehicle(){
